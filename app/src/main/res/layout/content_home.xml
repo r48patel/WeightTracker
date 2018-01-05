@@ -1,10 +1,226 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:isScrollContainer="true"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.rpatel.weighttracker.Home"
     tools:showIn="@layout/app_bar_home">
-</android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/dateTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp"
+            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toTopOf="@+id/weightLinearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!--Weight-->
+        <LinearLayout
+            android:id="@+id/weightLinearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/fatLinearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateTimeTextView">
+
+            <TextView
+                android:id="@+id/weightTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_weight="0.5"
+                android:text="Weight"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="30sp" />
+
+            <EditText
+                android:id="@+id/weightInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="lbs"
+                android:inputType="numberDecimal"
+                android:labelFor="@+id/weightTextView"
+                android:singleLine="false"
+                android:textAlignment="center" />
+
+        </LinearLayout>
+
+        <!--Fat %-->
+        <LinearLayout
+            android:id="@+id/fatLinearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/waterLinearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weightLinearLayout">
+
+            <TextView
+                android:id="@+id/fatTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_weight="0.5"
+                android:text="Fat"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="30sp" />
+
+            <EditText
+                android:id="@+id/fatInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="%"
+                android:inputType="numberDecimal"
+                android:labelFor="@+id/weightTextView"
+                android:singleLine="false"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <!--PBW-->
+        <LinearLayout
+            android:id="@+id/waterLinearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/massLinearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fatLinearLayout">
+
+            <TextView
+                android:id="@+id/waterTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_weight="0.5"
+                android:isScrollContainer="true"
+                android:text="PBW"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="30sp" />
+
+            <EditText
+                android:id="@+id/waterInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="Body Water %"
+                android:inputType="numberDecimal"
+                android:labelFor="@+id/weightTextView"
+                android:singleLine="false"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <!--PBM-->
+        <LinearLayout
+            android:id="@+id/massLinearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/boneLinearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/waterLinearLayout">
+
+            <TextView
+                android:id="@+id/massTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_weight="0.5"
+                android:isScrollContainer="true"
+                android:text="PBM"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="30sp" />
+
+            <EditText
+                android:id="@+id/massInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="Body Mass %"
+                android:inputType="numberDecimal"
+                android:labelFor="@+id/weightTextView"
+                android:singleLine="false"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <!--PBM-->
+        <LinearLayout
+            android:id="@+id/boneLinearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/massLinearLayout">
+
+            <TextView
+                android:id="@+id/boneTextView"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_weight="0.5"
+                android:isScrollContainer="true"
+                android:text="BM"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textSize="30sp" />
+
+            <EditText
+                android:id="@+id/boneInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="Bone Mass %"
+                android:inputType="numberDecimal"
+                android:labelFor="@+id/weightTextView"
+                android:singleLine="false"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
