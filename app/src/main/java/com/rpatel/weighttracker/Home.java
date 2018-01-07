@@ -1,10 +1,14 @@
 package com.rpatel.weighttracker;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,18 +50,38 @@ public class Home extends AppCompatActivity
         TextView dateTimeTextView = findViewById(R.id.dateTimeTextView);
         dateTimeTextView.setText(sdf.format(currentTime));
 
+        final EditText weightInout = findViewById(R.id.weightInput);
+
+        weightInout.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                weightInout.getBackground().clearColorFilter();
+                return false;
+            }
+        });
+
+
+        // Saving fields
         FloatingActionButton save_fab = findViewById(R.id.save_fab);
         save_fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 System.out.println("Click Save!");
-                writeFile(view, fileName);
-                for(String line : readFile(view, fileName)){
-                    System.out.println("line: " + line);
+                if(validateTextFields(Arrays.asList(weightInout))) {
+                    writeFile(view, fileName);
+                    for(String line : readFile(view, fileName)){
+                        System.out.println("line: " + line);
+                    }
                 }
+                else{
+                    displaySnackBar(view, "Please enter weight.");
+                }
+
             }
         });
 
+
+        // Deleting file
         final FloatingActionButton delete_fab = findViewById(R.id.delete_fab);
         delete_fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,9 +96,9 @@ public class Home extends AppCompatActivity
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 System.out.println("Click Delete!");
-                                Toast.makeText(getApplicationContext(), "Delete file", Toast.LENGTH_SHORT).show();
+                                displaySnackBar(view, "Delete file");
                                 deleteFile(view, fileName);
-                                Toast.makeText(getApplicationContext(), "Delete file", Toast.LENGTH_SHORT).show();
+                                displaySnackBar(view, "Delete file");
 //                                finish();
                             }
 
@@ -96,12 +121,24 @@ public class Home extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    public void validateFields(){
+    public boolean validateTextFields(List<EditText> fieldList){
+        boolean returnVal = true;
+        for(EditText field : fieldList){
+            String value = field.getText().toString();
+            if(value.equals("")){
+                field.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.ADD);
+                returnVal = false;
+            }
+        }
+        return returnVal;
+    }
 
+    public void displaySnackBar(View view, String msg){
+        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 
     public boolean deleteFile(View view, String fileName){
@@ -110,22 +147,35 @@ public class Home extends AppCompatActivity
 
     public void writeFile(View view, String fileName){
         FileOutputStream saveFile = null;
+        Date date = Calendar.getInstance().getTime();
+        EditText weight = findViewById(R.id.weightInput);
+        EditText fat = findViewById(R.id.fatInput);
+        EditText water = findViewById(R.id.waterInput);
+        EditText muscle = findViewById(R.id.massInput);
+        EditText bone = findViewById(R.id.boneInput);
+
+
+        displaySnackBar(view, weight.getText().toString());
         try {
             saveFile = openFileOutput(fileName, MODE_APPEND);
-            saveFile.write(String.format("Test - %s;", Calendar.getInstance().getTime()).getBytes(Charset.forName("UTF-8")));
+
+            saveFile.write(String.format("Test - %s, %s, %s, %s, %s, %s;",
+                    date,
+                    weight.getText().toString(),
+                    fat.getText().toString(),
+                    water.getText().toString(),
+                    muscle.getText().toString(),
+                    bone.getText().toString()).getBytes(Charset.forName("UTF-8")));
         }
         catch (FileNotFoundException e) {
-            Snackbar.make(view, String.format("Given file %s is not present", fileName), Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            displaySnackBar(view, String.format("Given file %s is not present", fileName));
             e.printStackTrace();
         }
         catch (IOException e) {
-            Snackbar.make(view, String.format("Something went wrong with writing the file: %s", fileName), Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            displaySnackBar(view, String.format("Something went wrong with writing the file: %s", fileName));
             e.printStackTrace();
         }
-        Snackbar.make(view, "Saved!", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        displaySnackBar(view, "Saved!");
     }
 
     public List<String> readFile(View view, String fileName){
@@ -147,13 +197,11 @@ public class Home extends AppCompatActivity
 
         }
         catch (FileNotFoundException e) {
-            Snackbar.make(view, String.format("Given file %s is not present", fileName), Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            displaySnackBar(view, String.format("Given file %s is not present", fileName));
             e.printStackTrace();
         }
         catch (IOException e) {
-            Snackbar.make(view, String.format("Something went wrong with reading the file: %s", fileName), Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            displaySnackBar(view, String.format("Something went wrong with reading the file: %s", fileName));
             e.printStackTrace();
         }
         finally {
@@ -230,5 +278,15 @@ public class Home extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void showTimePickerDialog(View view) {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getFragmentManager(), "timePicker");
+    }
+
+    public void showDatePickerDialog(View view) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "datePicker");
     }
 }
