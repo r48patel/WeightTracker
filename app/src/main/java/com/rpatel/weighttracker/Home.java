@@ -37,18 +37,22 @@ public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private String fileName = "results.csv";
+    static private TextView dateTimeTextView = null;
+    static Date date = Calendar.getInstance().getTime();
+
+    private void setDateTimeTextView(View view){
+        dateTimeTextView = (TextView) view;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        final Date currentTime = Calendar.getInstance().getTime();
-        final SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy @ hh:mm:ssa");
-
-        TextView dateTimeTextView = findViewById(R.id.dateTimeTextView);
-        dateTimeTextView.setText(sdf.format(currentTime));
+        setDateTimeTextView(findViewById(R.id.dateTimeTextView));
+        setTimeText(date);
 
         final EditText weightInout = findViewById(R.id.weightInput);
 
@@ -125,6 +129,31 @@ public class Home extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    public static void setTimeText(int year, int month, int day){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        setTimeText(cal.getTime());
+    }
+
+    public static void setTimeText(int hour, int min){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.MINUTE, min);
+        setTimeText(cal.getTime());
+
+    }
+
+    public static void setTimeText(Date givenDate){
+        if (dateTimeTextView != null) {
+            date = givenDate;
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy @ hh:mma");
+            dateTimeTextView.setText(sdf.format(date));
+        }
+    }
     public boolean validateTextFields(List<EditText> fieldList){
         boolean returnVal = true;
         for(EditText field : fieldList){
@@ -141,11 +170,11 @@ public class Home extends AppCompatActivity
         Snackbar.make(view, msg, Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 
-    public boolean deleteFile(View view, String fileName){
+    private boolean deleteFile(View view, String fileName){
         return deleteFile(fileName);
     }
 
-    public void writeFile(View view, String fileName){
+    private void writeFile(View view, String fileName){
         FileOutputStream saveFile = null;
         Date date = Calendar.getInstance().getTime();
         EditText weight = findViewById(R.id.weightInput);
@@ -281,12 +310,22 @@ public class Home extends AppCompatActivity
     }
 
     public void showTimePickerDialog(View view) {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getFragmentManager(), "timePicker");
+        DialogFragment timeFragment = new TimePickerFragment();
+        Bundle args = new Bundle();
+        args.putInt("hour", Integer.parseInt(new SimpleDateFormat("HH").format(date)));
+        args.putInt("minute", Integer.parseInt(new SimpleDateFormat("mm").format(date)));
+        timeFragment.setArguments(args);
+        timeFragment.show(getFragmentManager(), "timePicker");
+//        args.putInt("hour", Integer.parseInt(new SimpleDateFormat("EEE, d MMM yyyy @ hh:mma").format(date)));
     }
 
     public void showDatePickerDialog(View view) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getFragmentManager(), "datePicker");
+        DialogFragment dateFragment = new DatePickerFragment();
+        Bundle args = new Bundle();
+        args.putInt("year", Integer.parseInt(new SimpleDateFormat("yyyy").format(date)));
+        args.putInt("month", Integer.parseInt(new SimpleDateFormat("M").format(date)));
+        args.putInt("day", Integer.parseInt(new SimpleDateFormat("d").format(date)));
+        dateFragment.setArguments(args);
+        dateFragment.show(getFragmentManager(), "datePicker");
     }
 }
