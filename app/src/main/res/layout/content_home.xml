@@ -25,10 +25,41 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
             android:textAlignment="viewStart"
-            app:layout_constraintBottom_toTopOf="@+id/weightLinearLayout"
+            app:layout_constraintBottom_toTopOf="@+id/dateTimeLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <!--Date and Time-->
+        <LinearLayout
+            android:id="@+id/dateTimeLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/weightLinearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dateTimeTextView">
+
+            <Button
+                android:id="@+id/dateButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="showDatePickerDialog"
+                android:text="Pick Date"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/timeButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="showTimePickerDialog"
+                android:text="Pick Time"
+                android:visibility="visible" />
+        </LinearLayout>
 
         <!--Weight-->
         <LinearLayout
@@ -40,7 +71,7 @@
             app:layout_constraintBottom_toTopOf="@+id/fatLinearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateTimeTextView">
+            app:layout_constraintTop_toBottomOf="@+id/dateTimeLayout">
 
             <TextView
                 android:id="@+id/weightTextView"
@@ -183,18 +214,18 @@
                 android:textAlignment="center" />
         </LinearLayout>
 
-        <!--PBM-->
+        <!--BM-->
         <LinearLayout
             android:id="@+id/boneLinearLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="178dp"
             android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/massLinearLayout"
-            app:layout_constraintBottom_toTopOf="@+id/dateTimeLayout">
+            app:layout_constraintTop_toBottomOf="@+id/massLinearLayout">
 
             <TextView
                 android:id="@+id/boneTextView"
@@ -222,37 +253,6 @@
                 android:textAlignment="center" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/dateTimeLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="150dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/boneLinearLayout">
-
-            <Button
-                android:id="@+id/dateButton"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="showDatePickerDialog"
-                android:text="Pick Date"
-                android:visibility="visible" />
-
-            <Button
-                android:id="@+id/timeButton"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="showTimePickerDialog"
-                android:text="Pick Time"
-                android:visibility="visible" />
-        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 
