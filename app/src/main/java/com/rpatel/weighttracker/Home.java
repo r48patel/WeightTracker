@@ -3,6 +3,7 @@ package com.rpatel.weighttracker;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -208,7 +209,7 @@ public class Home extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -271,27 +272,15 @@ public class Home extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            Toast.makeText(getApplicationContext(), "nav_camera", Toast.LENGTH_SHORT).show();
+        if (id == R.id.nav_results) {
+            Intent resultsIntent = new Intent(Home.this, ResultsActivity.class);
+//            downloadIntent.setData(Uri.parse(fileUrl));
+            startActivity(resultsIntent);
+
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-            Toast.makeText(getApplicationContext(), "nav_gallery", Toast.LENGTH_SHORT).show();
-
-        } else if (id == R.id.nav_slideshow) {
-            Toast.makeText(getApplicationContext(), "nav_slideshow", Toast.LENGTH_SHORT).show();
-
-        } else if (id == R.id.nav_manage) {
-            Toast.makeText(getApplicationContext(), "nav_manage", Toast.LENGTH_SHORT).show();
-
-        } else if (id == R.id.nav_share) {
-            Toast.makeText(getApplicationContext(), "nav_share", Toast.LENGTH_SHORT).show();
-
-        } else if (id == R.id.nav_send) {
-            Toast.makeText(getApplicationContext(), "nav_send", Toast.LENGTH_SHORT).show();
-
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -303,7 +292,6 @@ public class Home extends AppCompatActivity
         args.putInt("minute", Integer.parseInt(new SimpleDateFormat("mm").format(date)));
         timeFragment.setArguments(args);
         timeFragment.show(getFragmentManager(), "timePicker");
-//        args.putInt("hour", Integer.parseInt(new SimpleDateFormat("EEE, d MMM yyyy @ hh:mma").format(date)));
     }
 
     public void showDatePickerDialog(View view) {

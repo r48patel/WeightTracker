@@ -23,4 +23,6 @@
     <dimen name="img_thumb">40dp</dimen>
     <dimen name="img_thumb_large">100dp</dimen>
     <dimen name="footer">64dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>
