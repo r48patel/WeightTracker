@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -72,50 +71,15 @@ public class Home extends AppCompatActivity
             public void onClick(View view) {
                 System.out.println("Click Save!");
                 if(validateTextFields(Arrays.asList(weightInout))) {
-                    writeFile(view, fileName);
-                    for(String line : readFile(view, fileName)){
+                    writeFile(fileName);
+                    for(String line : readFile(fileName)){
                         System.out.println("line: " + line);
                     }
                 }
                 else{
-                    displaySnackBar(view, "Please enter weight.");
+                    displayToast("Please enter weight.");
                 }
 
-            }
-        });
-
-
-        // Deleting file
-        final FloatingActionButton delete_fab = findViewById(R.id.delete_fab);
-        delete_fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-
-                new AlertDialog.Builder(Home.this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Delete File")
-                        .setMessage("Are you sure you want to delete the results file?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                System.out.println("Click Delete!");
-                                displaySnackBar(view, "Delete file");
-                                deleteFile(view, fileName);
-                                displaySnackBar(view, "Delete file");
-//                                finish();
-                            }
-
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                System.out.println("No Delete!");
-                                Toast.makeText(getApplicationContext(), "No Delete file", Toast.LENGTH_SHORT).show();
-//                                finish();
-                            }
-                        })
-                        .show();
             }
         });
 
@@ -166,15 +130,11 @@ public class Home extends AppCompatActivity
         return returnVal;
     }
 
-    public void displaySnackBar(View view, String msg){
-        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+    public void displayToast(String msg){
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
     }
 
-    private boolean deleteFile(View view, String fileName){
-        return deleteFile(fileName);
-    }
-
-    private void writeFile(View view, String fileName){
+    private void writeFile(String fileName){
         FileOutputStream saveFile = null;
         Date date = Calendar.getInstance().getTime();
         EditText weight = findViewById(R.id.weightInput);
@@ -184,7 +144,7 @@ public class Home extends AppCompatActivity
         EditText bone = findViewById(R.id.boneInput);
 
 
-        displaySnackBar(view, weight.getText().toString());
+        displayToast(weight.getText().toString());
         try {
             saveFile = openFileOutput(fileName, MODE_APPEND);
 
@@ -197,17 +157,17 @@ public class Home extends AppCompatActivity
                     bone.getText().toString()).getBytes(Charset.forName("UTF-8")));
         }
         catch (FileNotFoundException e) {
-            displaySnackBar(view, String.format("Given file %s is not present", fileName));
+            displayToast(String.format("Given file %s is not present", fileName));
             e.printStackTrace();
         }
         catch (IOException e) {
-            displaySnackBar(view, String.format("Something went wrong with writing the file: %s", fileName));
+            displayToast(String.format("Something went wrong with writing the file: %s", fileName));
             e.printStackTrace();
         }
-        displaySnackBar(view, "Saved!");
+        displayToast("Saved!");
     }
 
-    public List<String> readFile(View view, String fileName){
+    public List<String> readFile(String fileName){
         List<String> fileLines = null;
         FileInputStream fileToRead = null;
 
@@ -226,11 +186,11 @@ public class Home extends AppCompatActivity
 
         }
         catch (FileNotFoundException e) {
-            displaySnackBar(view, String.format("Given file %s is not present", fileName));
+            displayToast(String.format("Given file %s is not present", fileName));
             e.printStackTrace();
         }
         catch (IOException e) {
-            displaySnackBar(view, String.format("Something went wrong with reading the file: %s", fileName));
+            displayToast(String.format("Something went wrong with reading the file: %s", fileName));
             e.printStackTrace();
         }
         finally {
@@ -272,6 +232,33 @@ public class Home extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(getApplicationContext(), "Settings Selected!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        if (id == R.id.action_delete) {
+            new AlertDialog.Builder(Home.this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Delete File")
+                    .setMessage("Are you sure you want to delete the results file?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.out.println("Click Delete!");
+                            deleteFile(fileName);
+                        }
+
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            System.out.println("No Delete!");
+                            Toast.makeText(getApplicationContext(), "No Delete file", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .show();
+
             return true;
         }
 
