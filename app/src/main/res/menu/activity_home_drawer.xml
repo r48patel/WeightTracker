@@ -13,7 +13,7 @@
     <item android:title="Actions">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_export"
                 android:icon="@drawable/ic_import_export_black_24dp"
                 android:title="Export" />
         </menu>

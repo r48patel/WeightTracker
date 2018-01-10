@@ -2,11 +2,17 @@ package com.rpatel.weighttracker;
 
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.ContactsContract;
+import android.provider.DocumentsContract;
+import android.provider.DocumentsProvider;
 import android.support.design.widget.FloatingActionButton;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +31,9 @@ import android.widget.Toast;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -33,11 +41,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static android.os.Environment.getExternalStorageDirectory;
+
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private String fileName = "results.csv";
-    static private TextView dateTimeTextView = null;
+    private static TextView dateTimeTextView = null;
+    private static final int FILE_SELECT_CODE = 0;
     static Date date = Calendar.getInstance().getTime();
 
     private void setDateTimeTextView(View view){
@@ -144,18 +155,17 @@ public class Home extends AppCompatActivity
         EditText muscle = findViewById(R.id.massInput);
         EditText bone = findViewById(R.id.boneInput);
 
-
-        displayToast(weight.getText().toString());
         try {
             saveFile = openFileOutput(fileName, MODE_APPEND);
 
             saveFile.write(String.format("Test - %s, %s, %s, %s, %s, %s;",
                     date,
-                    weight.getText().toString(),
-                    fat.getText().toString(),
-                    water.getText().toString(),
-                    muscle.getText().toString(),
-                    bone.getText().toString()).getBytes(Charset.forName("UTF-8")));
+                    weight.getText().toString().equals("") ? "0" : weight.getText().toString(),
+                    fat.getText().toString().equals("") ? "0" : fat.getText().toString(),
+                    water.getText().toString().equals("") ? "0" : water.getText().toString(),
+                    muscle.getText().toString().equals("") ? "0" : muscle.getText().toString(),
+                    bone.getText().toString().equals("") ? "0" : bone.getText().toString()
+            ).getBytes(Charset.forName("UTF-8")));
         }
         catch (FileNotFoundException e) {
             displayToast(String.format("Given file %s is not present", fileName));
@@ -274,15 +284,72 @@ public class Home extends AppCompatActivity
 
         if (id == R.id.nav_results) {
             Intent resultsIntent = new Intent(Home.this, ResultsActivity.class);
-//            downloadIntent.setData(Uri.parse(fileUrl));
+//            resultsIntent.setData(Uri.parse(getFileStreamPath(fileName)));
             startActivity(resultsIntent);
+        }
 
-            // Handle the camera action
+        if (id == R.id.nav_export) {
+
+
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
+            intent.putExtra("android.content.extra.FANCY", true);
+            intent.putExtra("android.content.extra.SHOW_FILESIZE", true);
+//            intent.putExtra(Intent.EXTRA_TITLE, "test.csv");
+//            intent.setType("text/csv");
+            intent.putExtra(Intent.EXTRA_TITLE, "test.txt");
+            intent.setType("text/plain");
+
+
+            try {
+                startActivityForResult(intent, FILE_SELECT_CODE);
+            } catch (android.content.ActivityNotFoundException ex) {
+                // Potentially direct the user to the Market with a Dialog
+                displayToast("Please install a File Manager.");
+            }
+
+
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == FILE_SELECT_CODE) {
+            if (resultCode == RESULT_OK) {
+                displayToast("Result_ok");
+                System.out.println(data.getDataString());
+                System.out.println("YES!");
+                exportResultsFile(data.getData());
+                // Do something with the contact here (bigger example below)
+            }
+            else {
+                displayToast("Please select a location!");
+            }
+        }
+    }
+
+    public void exportResultsFile(Uri uri){
+        ContentResolver cr = getApplicationContext().getContentResolver();
+        try {
+            OutputStream export_file = cr.openOutputStream(uri);
+            for(String line : readFile(fileName)) {
+                line += "\n";
+                export_file.write(line.getBytes());
+
+            }
+            export_file.flush();
+            export_file.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void showTimePickerDialog(View view) {
