@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -294,6 +295,10 @@ public class Home extends AppCompatActivity
         if (id == R.id.nav_results) {
             Intent resultsIntent = new Intent(Home.this, ResultsActivity.class);
 //            resultsIntent.setData(Uri.parse(getFileStreamPath(fileName)));
+//            resultsIntent.set
+            Bundle args = new Bundle();
+            args.putStringArrayList("lines", new ArrayList(readFile(fileName)));
+            resultsIntent.putExtra("args", args);
             startActivity(resultsIntent);
         }
 

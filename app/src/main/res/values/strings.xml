@@ -7,7 +7,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_delete">Delete Results File</string>
     <string name="title_activity_results">ResultsActivity</string>
-    <string name="large_text">
+    <string name="results_test">
         "Material is the metaphor.\n\n"
 
         "A material metaphor is the unifying theory of a rationalized space and a system of motion."
