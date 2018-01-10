@@ -3,16 +3,13 @@ package com.rpatel.weighttracker;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.ContactsContract;
-import android.provider.DocumentsContract;
-import android.provider.DocumentsProvider;
 import android.support.design.widget.FloatingActionButton;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +21,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +29,6 @@ import android.widget.Toast;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -65,12 +62,16 @@ public class Home extends AppCompatActivity
         setDateTimeTextView(findViewById(R.id.dateTimeTextView));
         setTimeText(date);
 
-        final EditText weightInout = findViewById(R.id.weightInput);
+        final EditText weight = findViewById(R.id.weightInput);
+        final EditText fat = findViewById(R.id.fatInput);
+        final EditText water = findViewById(R.id.waterInput);
+        final EditText muscle = findViewById(R.id.massInput);
+        final EditText bone = findViewById(R.id.boneInput);
 
-        weightInout.setOnTouchListener(new View.OnTouchListener(){
+        weight.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                weightInout.getBackground().clearColorFilter();
+                weight.getBackground().clearColorFilter();
                 return false;
             }
         });
@@ -82,11 +83,19 @@ public class Home extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 System.out.println("Click Save!");
-                if(validateTextFields(Arrays.asList(weightInout))) {
+                if(validateTextFields(Arrays.asList(weight))) {
                     writeFile(fileName);
                     for(String line : readFile(fileName)){
                         System.out.println("line: " + line);
                     }
+                    weight.setText("");
+                    fat.setText("");
+                    water.setText("");
+                    muscle.setText("");
+                    bone.setText("");
+//                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    weight.requestFocus();
                 }
                 else{
                     displayToast("Please enter weight.");
