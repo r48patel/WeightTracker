@@ -1,9 +1,9 @@
 package com.rpatel.weighttracker;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -38,8 +38,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import static android.os.Environment.getExternalStorageDirectory;
 
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -94,8 +92,6 @@ public class Home extends AppCompatActivity
                     water.setText("");
                     muscle.setText("");
                     bone.setText("");
-//                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     weight.requestFocus();
                 }
                 else{
@@ -107,12 +103,25 @@ public class Home extends AppCompatActivity
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                closeKeyboard(Home.this);
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(Home.this);
+    }
+
+    private void closeKeyboard(Activity activity){
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     public static void setTimeText(int year, int month, int day){
@@ -158,7 +167,6 @@ public class Home extends AppCompatActivity
 
     private void writeFile(String fileName){
         FileOutputStream saveFile = null;
-        Date date = Calendar.getInstance().getTime();
         EditText weight = findViewById(R.id.weightInput);
         EditText fat = findViewById(R.id.fatInput);
         EditText water = findViewById(R.id.waterInput);
@@ -168,8 +176,8 @@ public class Home extends AppCompatActivity
         try {
             saveFile = openFileOutput(fileName, MODE_APPEND);
 
-            saveFile.write(String.format("Test - %s, %s, %s, %s, %s, %s;",
-                    date,
+            saveFile.write(String.format("%s, %s, %s, %s, %s, %s;",
+                    new SimpleDateFormat("mm/dd/yyyy - hh:mma").format(date),
                     weight.getText().toString().equals("") ? "0" : weight.getText().toString(),
                     fat.getText().toString().equals("") ? "0" : fat.getText().toString(),
                     water.getText().toString().equals("") ? "0" : water.getText().toString(),
@@ -189,7 +197,7 @@ public class Home extends AppCompatActivity
     }
 
     public List<String> readFile(String fileName){
-        List<String> fileLines = null;
+        List<String> fileLines = new ArrayList<>();
         FileInputStream fileToRead = null;
 
         try {
@@ -245,6 +253,12 @@ public class Home extends AppCompatActivity
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        closeKeyboard(Home.this);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -286,7 +300,6 @@ public class Home extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -294,8 +307,6 @@ public class Home extends AppCompatActivity
 
         if (id == R.id.nav_results) {
             Intent resultsIntent = new Intent(Home.this, ResultsActivity.class);
-//            resultsIntent.setData(Uri.parse(getFileStreamPath(fileName)));
-//            resultsIntent.set
             Bundle args = new Bundle();
             args.putStringArrayList("lines", new ArrayList(readFile(fileName)));
             resultsIntent.putExtra("args", args);
