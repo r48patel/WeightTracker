@@ -177,7 +177,7 @@ public class Home extends AppCompatActivity
             saveFile = openFileOutput(fileName, MODE_APPEND);
 
             saveFile.write(String.format("%s, %s, %s, %s, %s, %s;",
-                    new SimpleDateFormat("mm/dd/yyyy - hh:mma").format(date),
+                    new SimpleDateFormat("MM/dd/yy - h:mma").format(date),
                     weight.getText().toString().equals("") ? "0" : weight.getText().toString(),
                     fat.getText().toString().equals("") ? "0" : fat.getText().toString(),
                     water.getText().toString().equals("") ? "0" : water.getText().toString(),
