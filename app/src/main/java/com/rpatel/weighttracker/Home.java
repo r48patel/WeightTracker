@@ -39,6 +39,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * TOOD:
+ *      Fix export file so that it has a header
+ *      Add import option
+ *      Fix Display of Results (shows 1,2,4,5,3)
+ *
+ */
+
 public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -145,7 +153,7 @@ public class Home extends AppCompatActivity
     public static void setTimeText(Date givenDate){
         if (dateTimeTextView != null) {
             date = givenDate;
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy @ hh:mma");
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy @ h:mma");
             dateTimeTextView.setText(sdf.format(date));
         }
     }
@@ -177,7 +185,7 @@ public class Home extends AppCompatActivity
             saveFile = openFileOutput(fileName, MODE_APPEND);
 
             saveFile.write(String.format("%s, %s, %s, %s, %s, %s;",
-                    new SimpleDateFormat("MM/dd/yy - h:mma").format(date),
+                    new SimpleDateFormat("M/d/yy - h:mma").format(date),
                     weight.getText().toString().equals("") ? "0" : weight.getText().toString(),
                     fat.getText().toString().equals("") ? "0" : fat.getText().toString(),
                     water.getText().toString().equals("") ? "0" : water.getText().toString(),
@@ -313,22 +321,27 @@ public class Home extends AppCompatActivity
             startActivity(resultsIntent);
         }
 
-        if (id == R.id.nav_export) {
+        if (id == R.id.nav_export_csv || id == R.id.nav_export_text) {
 
 
             Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
             intent.putExtra("android.content.extra.SHOW_ADVANCED", true);
             intent.putExtra("android.content.extra.FANCY", true);
             intent.putExtra("android.content.extra.SHOW_FILESIZE", true);
-//            intent.putExtra(Intent.EXTRA_TITLE, "test.csv");
-//            intent.setType("text/csv");
-            intent.putExtra(Intent.EXTRA_TITLE, "test.txt");
-            intent.setType("text/plain");
 
+            if (id == R.id.nav_export_csv) {
+                intent.putExtra(Intent.EXTRA_TITLE, "test.csv");
+                intent.setType("text/csv");
+            }
+            else {
+                intent.putExtra(Intent.EXTRA_TITLE, "test.txt");
+                intent.setType("text/plain");
+            }
 
             try {
                 startActivityForResult(intent, FILE_SELECT_CODE);
-            } catch (android.content.ActivityNotFoundException ex) {
+            }
+            catch (android.content.ActivityNotFoundException ex) {
                 // Potentially direct the user to the Market with a Dialog
                 displayToast("Please install a File Manager.");
             }
@@ -346,10 +359,8 @@ public class Home extends AppCompatActivity
         // Check which request we're responding to
         if (requestCode == FILE_SELECT_CODE) {
             if (resultCode == RESULT_OK) {
-                displayToast("Result_ok");
-                System.out.println(data.getDataString());
-                System.out.println("YES!");
                 exportResultsFile(data.getData());
+                displayToast("File saved!");
                 // Do something with the contact here (bigger example below)
             }
             else {
